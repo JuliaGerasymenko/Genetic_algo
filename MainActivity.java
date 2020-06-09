@@ -2,6 +2,9 @@ package ua.ip74.genetic;
 
 import android.os.Bundle;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +18,10 @@ import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity {
     EditText a, b, c, d, y;
-    int aValue, bValue, cValue, dValue, yValue;
+    int aValue, bValue, cValue, dValue, yValue, counter = 0, times = 0;
+    double[] rateArr = new double[]{0.1,0.2,0.3,0.4,0.5, 0.6, 0.7, 0.8, 0.9};
+    long[] timeExeqution = new long[9];
+    int[][] answers = new int [9][6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,22 +58,22 @@ public class MainActivity extends AppCompatActivity {
         cValue = Integer.parseInt(c.getText().toString());
         dValue = Integer.parseInt(d.getText().toString());
         yValue = Integer.parseInt(y.getText().toString());
-        //showToast("Hello "+ Arrays.toString(new int[]{aValue, bValue, cValue, dValue, yValue}));
+//        showToast("Hello "+ Arrays.toString(new int[]{aValue, bValue, cValue, dValue, yValue}));
         hideKeyboard();
 
  
             int chromosomeNum, uniqueParents;
              int generationNum, generations;
-             double mutationRate;
              double totalFitness;
+             double mutationRate;
              double crossoverRate;
              int[][] chromosomes, newChromo, parent1, parent2, allocParent;
-             int[] calc, crossover, parentInd1, defaultArr, allocIndex;
+             int[] calc, crossover, parentInd1, allocIndex;
              double[] fitness, probability, comulativeProb, R;
-             
+
+        mutationRate = rateArr[counter];
         chromosomeNum = 6;
         generationNum = 4;
-        mutationRate = 0.1;
         crossoverRate = 0.25;
         generations = 200;
         calc = new int[chromosomeNum];
@@ -80,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         chromosomes = new int[chromosomeNum][generationNum];
         newChromo = new int[chromosomeNum][generationNum];
         allocParent = new int[chromosomeNum][generationNum];
-
-        for(int t = 0; t< generations; t++)
+        long startTime = System.nanoTime();
+        for(int t = 0; t < generations; t++)
 
             {
                 for (int i = 0; i < chromosomeNum; i++) {
@@ -91,12 +97,29 @@ public class MainActivity extends AppCompatActivity {
 
                         calc[i] += chromosomes[i][j] * coef[j];
                     }
-                    System.out.println('N');
                     calc[i] = Math.abs(calc[i] - coef[4]);
 
                     if (calc[i] == 0) {
 
-                        showToast("Answer is: " + Arrays.toString(chromosomes[i]));
+                        long endTime = System.nanoTime();
+                        timeExeqution[counter] = endTime-startTime;
+                        answers[counter] = chromosomes[i];
+
+                        counter++;
+                        while(counter < 8) {
+                            Genetic(view);
+                        }
+                        if (times > 7) {
+                            Map<Long, Double> map = new HashMap<>();
+                            for (int counter = 0; counter < 9; counter++) {
+                                showToast("Answer is: " + Arrays.toString(answers[counter]));
+                                map.put(timeExeqution[counter], rateArr[counter]);
+//                                showToast("Elapsed task " + counter + " " + timeExeqution[counter]);
+                            }
+                            Long min = Collections.min(map.keySet());
+                            showToast("Time elapsed  " + min+ " with mutation ratio "+ map.get(min)+"%");
+                        }
+                        times++;
                         return;
                     }
                     fitness[i] = 1 / (1 + calc[i]);
@@ -193,20 +216,21 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i = 0; i < numMutation; i++) {
                     randGen = (int) Math.random() * (totalGen - 1);
-                    if (randGen % generationNum == 0) {
+                    if (randGen % generationNum == 0)
                         chromosomes[randGen / generationNum - 1][generationNum - 1] = (int) (Math.random() * coef[coef.length - 1] - 1) + 1;
-                    } else {
+                    else {
                         chromosomes[randGen / generationNum][randGen % generationNum - 1] = (int) (Math.random() * coef[coef.length - 1] - 1) + 1;
                     }
                 }
 
 
-//		System.out.println();
+//		System.out.println(
             }
         
-//        showToast("x1: " + +" x2:"+ );
-
+//        showToast("x1: " + +" x2:"+ ) showToast("Answer is: " + answer[counter]);
     }
+
+
 
     private int findIndex(double[] arr, double v) {
 

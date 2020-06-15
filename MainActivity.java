@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                         long endTime = System.nanoTime();
                         timeExeqution[counter] = endTime-startTime;
                         answers[counter] = chromosomes[i];
-
+                        showToast("The number of iterations  is: " + t);
                         counter++;
                         while(counter < 8) {
                             Genetic(view);
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int counter = 0; counter < 9; counter++) {
                                 showToast("Answer is: " + Arrays.toString(answers[counter]));
                                 map.put(timeExeqution[counter], rateArr[counter]);
+
 //                                showToast("Elapsed task " + counter + " " + timeExeqution[counter]);
                             }
                             Long min = Collections.min(map.keySet());

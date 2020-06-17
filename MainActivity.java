@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             int chromosomeNum, uniqueParents;
              int generationNum, generations;
              double totalFitness;
-             double mutationRate;
+             double mutationRate, newK;
              double crossoverRate;
              int[][] chromosomes, newChromo, parent1, parent2, allocParent;
              int[] calc, crossover, parentInd1, allocIndex;
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         generationNum = 4;
         crossoverRate = 0.25;
         generations = 200;
+        newK = 1.2;
         calc = new int[chromosomeNum];
         allocIndex = new int[chromosomeNum];
         fitness = new double[chromosomeNum];
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 for (int i = 0; i < chromosomeNum; i++) {
                     calc[i] = 0;
+                    crossoverRate = crossoverRate*newK;
                     for (int j = 0; j < generationNum; j++) {
                         chromosomes[i][j] = (int) (Math.random() * coef[coef.length - 1]);
 
